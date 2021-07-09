@@ -55,6 +55,7 @@
                 bodyNode.style.background = `linear-gradient(${currentColor.c1},${currentColor.c2}) no-repeat`;
             }
             updateInfo();
+			
         }
 
         function updateInfo(){
@@ -63,21 +64,41 @@
 				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n${colors[currentColorIndex].c1}, ${colors[currentColorIndex].c2}`;
 			else
 				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n#000, #000`;
+			
+			
         }
 		
-		function updateDropdown(newColor){
+		function updateDropdown(newIndex, strCommand){
 		
             const selectNode = document.getElementById("ddBGColor");
-            const option = document.createElement('option');
-            option.text = newColor.c1 + ' - ' + newColor.c2;
-            //option.onclick = updateColor;
-            option.style.backgroundColor = newColor.c1;
-            option.style.color = newColor.c2;
-            //selectNode.add(option, 0);
-            selectNode.add(option);
-            selectNode.style.background = option.value;
-            //selectNode.selectedIndex = selectNode.options[selectNode.options.length - 1];
 			
+			switch(strCommand){
+				case "new":
+					const option = document.createElement('option');
+					option.text = colors[newIndex].c1 + ' - ' + colors[newIndex].c2;
+					//option.onclick = updateColor;
+					option.style.backgroundColor = colors[newIndex].c1;
+					option.style.color = colors[newIndex].c2;
+					//selectNode.add(option, 0);
+					selectNode.add(option);
+					selectNode.style.background = option.value;
+					//selectNode.selectedIndex = selectNode.options[selectNode.options.length - 1];
+					selectNode.selectedIndex = newIndex+1;
+					break;
+					
+				case "prev":
+				case "next":
+					selectNode.selectedIndex = newIndex+1;
+					break;
+				case "remove":
+					console.log(selectNode.options);
+					console.log(selectNode.length);
+					//selectNode.remove(selectNode.options[selectNode.length-1]);
+					selectNode.remove(selectNode.length-1);
+					//selectNode.remove(1);
+					selectNode.selectedIndex = newIndex+1;
+					break;
+			}
 		}
 
         function newColor(){
@@ -88,23 +109,26 @@
             });
             currentColorIndex = colors.length-1;
             updateColor(colors[currentColorIndex]);
-			updateDropdown(colors[currentColorIndex]);
+			updateDropdown(currentColorIndex,"new");
 			// console.log("Index: " + currentColorIndex);
         }
 
         function prevColor(){
             if(colors.length !== 0){
-				currentColorIndex = (currentColorIndex!==0?--currentColorIndex:colors.length-1) % colors.length;
+				currentColorIndex = (currentColorIndex !== 0 ? --currentColorIndex : colors.length-1) % colors.length;
                 updateColor(colors[currentColorIndex]);
                 // console.log("Index: " + currentColorIndex);
+				updateDropdown(currentColorIndex,"prev");
             }
         }
 
         function nextColor(){
             if(colors.length !== 0){
-				currentColorIndex = ++currentColorIndex % colors.length;
+				//currentColorIndex = ++currentColorIndex % colors.length;
+				currentColorIndex = (currentColorIndex === colors.length-1 ? 0 : ++currentColorIndex) % colors.length;
                 updateColor(colors[currentColorIndex]);
                 // console.log("Index: " + currentColorIndex);
+				updateDropdown(currentColorIndex,"next");
             }
         }
 
@@ -115,10 +139,13 @@
 					prevColor();
 				}
 				updateInfo();
+				//updateDropdown(currentColorIndex,"remove");
             }else{
 				currentColorIndex = -1;
                 updateColor("#000");
+				//updateDropdown(-1,"remove");
             }
+			updateDropdown(currentColorIndex,"remove");
         }
 
     </script>
