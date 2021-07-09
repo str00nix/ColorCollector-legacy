@@ -44,7 +44,7 @@
             bodyNode = document.querySelector("body");
             bodyNode.style.background = "#000";
             infoNode = document.querySelector("textarea#info");
-            updateInfo()
+            updateInfo();
         });
 
         function updateColor(currentColor){
@@ -59,8 +59,26 @@
 
         function updateInfo(){
             const s = bodyNode.style.background;
-            infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n${s.substring(s.indexOf("linear-gradient("),s.lastIndexOf(")")+1)}`;
+			if(currentColorIndex != -1)
+				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n${colors[currentColorIndex].c1}, ${colors[currentColorIndex].c2}`;
+			else
+				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n#000, #000`;
         }
+		
+		function updateDropdown(newColor){
+		
+            const selectNode = document.getElementById("ddBGColor");
+            const option = document.createElement('option');
+            option.text = newColor.c1 + ' - ' + newColor.c2;
+            //option.onclick = updateColor;
+            option.style.backgroundColor = newColor.c1;
+            option.style.color = newColor.c2;
+            //selectNode.add(option, 0);
+            selectNode.add(option);
+            selectNode.style.background = option.value;
+            //selectNode.selectedIndex = selectNode.options[selectNode.options.length - 1];
+			
+		}
 
         function newColor(){
             colors.push({
@@ -70,6 +88,7 @@
             });
             currentColorIndex = colors.length-1;
             updateColor(colors[currentColorIndex]);
+			updateDropdown(colors[currentColorIndex]);
 			// console.log("Index: " + currentColorIndex);
         }
 
@@ -95,6 +114,7 @@
 				if(currentColorIndex === colors.length){
 					prevColor();
 				}
+				updateInfo();
             }else{
 				currentColorIndex = -1;
                 updateColor("#000");
@@ -113,6 +133,9 @@
 		<button onclick="newColor()">New Color!</button>
 		<button onclick="nextColor()">Next Color</button>
 		<button onclick="deleteColor()">Delete Last Color</button>
+		<select id="ddBGColor" name="ddTextColor" class="btn dropdown-toggle" style="font-weight: bold;">
+			<option hidden="hidden">Select Background Color</option>
+		</select>
 	</div>
 </div>
 
