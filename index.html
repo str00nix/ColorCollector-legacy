@@ -69,6 +69,16 @@
         });
 		
 
+        function updateInfo(){
+            const s = bodyNode.style.background;
+			if(currentColorIndex != -1){
+				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n${colors[currentColorIndex].c1}, ${colors[currentColorIndex].c2}`;
+			}
+			else{
+				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n#000, #000`;
+			}
+        }
+
         function updateColor(currentColor){
             if(typeof currentColor == "string"){
                 bodyNode.style.background = currentColor;
@@ -78,16 +88,6 @@
             }
 			
 			updateInfo();
-			
-        }
-
-        function updateInfo(){
-            const s = bodyNode.style.background;
-			if(currentColorIndex != -1)
-				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n${colors[currentColorIndex].c1}, ${colors[currentColorIndex].c2}`;
-			else
-				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n#000, #000`;
-			
 			
         }
 		
@@ -113,26 +113,31 @@
 					
 				case "prev":
 				case "next":
-					selectNode.selectedIndex = newIndex+1;
+					selectNode.selectedIndex = newIndex + 1;
 					updateDropDownColor();
 					break;
 				case "remove":
-					console.log(selectNode.options);
-					console.log(selectNode.length);
+					//console.log(selectNode.options);
+					//console.log(selectNode.length);
 					
 					if(selectNode.length == 1){
 						break;
 					}
 					
 					//selectNode.remove(selectNode.options[selectNode.length-1]);
-					selectNode.remove(selectNode.length-1);
+					selectNode.remove(selectNode.length - 1);
 					//selectNode.remove(1);
 					
-					selectNode.selectedIndex = newIndex+1;
+					selectNode.selectedIndex = newIndex + 1;
 					
 					//if(colors.length == 1){
 					//	selectNode.selectedIndex = 0;
 					//}
+					
+					if(selectNode.length == 1){
+						selectNode.style.backgroundColor = "#fff";
+						selectNode.style.color = "#000";
+					}					
 					
 					updateDropDownColor();
 					
@@ -143,10 +148,10 @@
         function newColor(){
             colors.push({
                 name: '',
-                c1 : '#'+(Math.random()*0xFFFFFF<<0).toString(16).padStart(6,'0'),
-                c2 : '#'+(Math.random()*0xFFFFFF<<0).toString(16).padStart(6,'0')
+                c1 : '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'),
+                c2 : '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')
             });
-            currentColorIndex = colors.length-1;
+            currentColorIndex = colors.length - 1;
             updateColor(colors[currentColorIndex]);
 			updateDropdown(currentColorIndex,"new");
 			// console.log("Index: " + currentColorIndex);
@@ -157,7 +162,7 @@
 				currentColorIndex = (currentColorIndex !== 0 ? --currentColorIndex : colors.length-1) % colors.length;
                 updateColor(colors[currentColorIndex]);
                 // console.log("Index: " + currentColorIndex);
-				updateDropdown(currentColorIndex,"prev");
+				updateDropdown(currentColorIndex, "prev");
             }
         }
 
@@ -167,7 +172,7 @@
 				currentColorIndex = (currentColorIndex === colors.length-1 ? 0 : ++currentColorIndex) % colors.length;
                 updateColor(colors[currentColorIndex]);
                 // console.log("Index: " + currentColorIndex);
-				updateDropdown(currentColorIndex,"next");
+				updateDropdown(currentColorIndex, "next");
             }
         }
 
@@ -178,14 +183,16 @@
 					prevColor();
 				}
 				updateInfo();
-				//updateDropdown(currentColorIndex,"remove");
+				//updateDropdown(currentColorIndex, "remove");
             }else{
 				currentColorIndex = -1;
                 updateColor("#000");
-				//updateDropdown(-1,"remove");
+				//updateDropdown(-1, "remove");
             }
-			updateDropdown(currentColorIndex,"remove");
+			updateDropdown(currentColorIndex, "remove");
         }
+		
+		function deleteSelectedColor(){}
 
     </script>
 
@@ -202,6 +209,7 @@
 		<select id="ddBGColor" name="ddTextColor" class="btn dropdown-toggle" style="font-weight: bold;">
 			<option hidden="hidden">Select Background Color</option>
 		</select>
+		<button onclick="deleteSelectedColor()">Delete Selected Color</button>
 	</div>
 </div>
 
