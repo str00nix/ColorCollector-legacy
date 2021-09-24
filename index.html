@@ -39,13 +39,35 @@
         var currentColorIndex = -1;
         var bodyNode;
         var infoNode;
+		
+		function updateDropDownColor(){
+			const selectNode = document.getElementById("ddBGColor");
+			const c = selectNode.children[selectNode.selectedIndex].value.split(" ");
+			console.log(c);
+			selectNode.style.backgroundColor = c[0];
+			selectNode.style.color = c[1];			
+		}
+		
+		function colorSelectChangeFunc(){
+			const selectNode = document.getElementById("ddBGColor");
+			console.log("Selected option index: " + selectNode.selectedIndex);
+			console.log(colors[selectNode.selectedIndex - 1]);
+			
+			currentColorIndex = selectNode.selectedIndex - 1;
+			//updateColor(colors[selectNode.selectedIndex - 1]);
+			updateColor(colors[currentColorIndex]);
+			
+			updateDropDownColor();
+		}
 
-        document.addEventListener("DOMContentLoaded",function(){
+        document.addEventListener("DOMContentLoaded", function(){
             bodyNode = document.querySelector("body");
             bodyNode.style.background = "#000";
             infoNode = document.querySelector("textarea#info");
             updateInfo();
+            document.querySelector("#ddBGColor").onchange = colorSelectChangeFunc;
         });
+		
 
         function updateColor(currentColor){
             if(typeof currentColor == "string"){
@@ -54,7 +76,8 @@
             else{
                 bodyNode.style.background = `linear-gradient(${currentColor.c1},${currentColor.c2}) no-repeat`;
             }
-            updateInfo();
+			
+			updateInfo();
 			
         }
 
@@ -76,6 +99,7 @@
 				case "new":
 					const option = document.createElement('option');
 					option.text = colors[newIndex].c1 + ' - ' + colors[newIndex].c2;
+					option.value = colors[newIndex].c1 + ' ' + colors[newIndex].c2;
 					//option.onclick = updateColor;
 					option.style.backgroundColor = colors[newIndex].c1;
 					option.style.color = colors[newIndex].c2;
@@ -83,20 +107,35 @@
 					selectNode.add(option);
 					selectNode.style.background = option.value;
 					//selectNode.selectedIndex = selectNode.options[selectNode.options.length - 1];
-					selectNode.selectedIndex = newIndex+1;
+					selectNode.selectedIndex = newIndex + 1;
+					updateDropDownColor();
 					break;
 					
 				case "prev":
 				case "next":
 					selectNode.selectedIndex = newIndex+1;
+					updateDropDownColor();
 					break;
 				case "remove":
 					console.log(selectNode.options);
 					console.log(selectNode.length);
+					
+					if(selectNode.length == 1){
+						break;
+					}
+					
 					//selectNode.remove(selectNode.options[selectNode.length-1]);
 					selectNode.remove(selectNode.length-1);
 					//selectNode.remove(1);
+					
 					selectNode.selectedIndex = newIndex+1;
+					
+					//if(colors.length == 1){
+					//	selectNode.selectedIndex = 0;
+					//}
+					
+					updateDropDownColor();
+					
 					break;
 			}
 		}
