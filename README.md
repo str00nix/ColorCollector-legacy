@@ -1,1 +1,1 @@
-# ColorCollector
+# ColorCollector - legacy

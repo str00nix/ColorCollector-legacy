@@ -9,6 +9,7 @@
             height: 100%;
 			/*min-height: 100vh;*/
 			margin:0;
+			background-color:#333;
         }
 
         #mainContent{
@@ -20,198 +21,152 @@
 		textarea#info{
 			display:inline;
             resize: none;
-            background-color: black;
-            color:white;
+            background-color: #111;
+			font-weight: bold;
+            color:#eee;
             box-shadow: none;
             border: azure;
             width: 440px;
 		}
 
-        #clickies{
-            <!-- width: 100%; -->
+        #buttons{
+            /*width: 100%;*/
         }
     </style>
-
-    <script>
-
-        var colors = [];
-        // var currentColor = null;
-        var currentColorIndex = -1;
-        var bodyNode;
-        var infoNode;
-		
-		function updateDropDownColor(){
-			const selectNode = document.getElementById("ddBGColor");
-			const c = selectNode.children[selectNode.selectedIndex].value.split(" ");
-			console.log(c);
-			selectNode.style.backgroundColor = c[0];
-			selectNode.style.color = c[1];			
-		}
-		
-		function colorSelectChangeFunc(){
-			const selectNode = document.getElementById("ddBGColor");
-			console.log("Selected option index: " + selectNode.selectedIndex);
-			console.log(colors[selectNode.selectedIndex - 1]);
-			
-			currentColorIndex = selectNode.selectedIndex - 1;
-			//updateColor(colors[selectNode.selectedIndex - 1]);
-			updateColor(colors[currentColorIndex]);
-			
-			updateDropDownColor();
-		}
-
-        document.addEventListener("DOMContentLoaded", function(){
-            bodyNode = document.querySelector("body");
-            bodyNode.style.background = "#000";
-            infoNode = document.querySelector("textarea#info");
-            updateInfo();
-            document.querySelector("#ddBGColor").onchange = colorSelectChangeFunc;
-        });
-		
-
-        function updateInfo(){
-            const s = bodyNode.style.background;
-			if(currentColorIndex != -1){
-				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n${colors[currentColorIndex].c1}, ${colors[currentColorIndex].c2}`;
-			}
-			else{
-				infoNode.textContent = `Index:  + ${currentColorIndex} / ${colors.length-1}\n#000, #000`;
-			}
-        }
-
-        function updateColor(currentColor){
-            if(typeof currentColor == "string"){
-                bodyNode.style.background = currentColor;
-            }
-            else{
-                bodyNode.style.background = `linear-gradient(${currentColor.c1},${currentColor.c2}) no-repeat`;
-            }
-			
-			updateInfo();
-			
-        }
-		
-		function updateDropdown(newIndex, strCommand){
-		
-            const selectNode = document.getElementById("ddBGColor");
-			
-			switch(strCommand){
-				case "new":
-					const option = document.createElement('option');
-					option.text = colors[newIndex].c1 + ' - ' + colors[newIndex].c2;
-					option.value = colors[newIndex].c1 + ' ' + colors[newIndex].c2;
-					//option.onclick = updateColor;
-					option.style.backgroundColor = colors[newIndex].c1;
-					option.style.color = colors[newIndex].c2;
-					//selectNode.add(option, 0);
-					selectNode.add(option);
-					selectNode.style.background = option.value;
-					//selectNode.selectedIndex = selectNode.options[selectNode.options.length - 1];
-					selectNode.selectedIndex = newIndex + 1;
-					updateDropDownColor();
-					break;
-					
-				case "prev":
-				case "next":
-					selectNode.selectedIndex = newIndex + 1;
-					updateDropDownColor();
-					break;
-				case "remove":
-					//console.log(selectNode.options);
-					//console.log(selectNode.length);
-					
-					if(selectNode.length == 1){
-						break;
-					}
-					
-					//selectNode.remove(selectNode.options[selectNode.length-1]);
-					selectNode.remove(selectNode.length - 1);
-					//selectNode.remove(1);
-					
-					selectNode.selectedIndex = newIndex + 1;
-					
-					//if(colors.length == 1){
-					//	selectNode.selectedIndex = 0;
-					//}
-					
-					if(selectNode.length == 1){
-						selectNode.style.backgroundColor = "#fff";
-						selectNode.style.color = "#000";
-					}					
-					
-					updateDropDownColor();
-					
-					break;
-			}
-		}
-
-        function newColor(){
-            colors.push({
-                name: '',
-                c1 : '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'),
-                c2 : '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')
-            });
-            currentColorIndex = colors.length - 1;
-            updateColor(colors[currentColorIndex]);
-			updateDropdown(currentColorIndex,"new");
-			// console.log("Index: " + currentColorIndex);
-        }
-
-        function prevColor(){
-            if(colors.length !== 0){
-				currentColorIndex = (currentColorIndex !== 0 ? --currentColorIndex : colors.length-1) % colors.length;
-                updateColor(colors[currentColorIndex]);
-                // console.log("Index: " + currentColorIndex);
-				updateDropdown(currentColorIndex, "prev");
-            }
-        }
-
-        function nextColor(){
-            if(colors.length !== 0){
-				//currentColorIndex = ++currentColorIndex % colors.length;
-				currentColorIndex = (currentColorIndex === colors.length-1 ? 0 : ++currentColorIndex) % colors.length;
-                updateColor(colors[currentColorIndex]);
-                // console.log("Index: " + currentColorIndex);
-				updateDropdown(currentColorIndex, "next");
-            }
-        }
-
-        function deleteColor(){
-            colors.pop();
-            if(colors.length !== 0){
-				if(currentColorIndex === colors.length){
-					prevColor();
-				}
-				updateInfo();
-				//updateDropdown(currentColorIndex, "remove");
-            }else{
-				currentColorIndex = -1;
-                updateColor("#000");
-				//updateDropdown(-1, "remove");
-            }
-			updateDropdown(currentColorIndex, "remove");
-        }
-		
-		function deleteSelectedColor(){}
-
-    </script>
 
 </head>
 <body>
 
 <div id="mainContent">
-    <div id="clickies">
+    <div id="buttons">
         <label for="info"></label><textarea id="info" readonly="readonly"></textarea>
 		<button onclick="prevColor()">Previous Color</button>
 		<button onclick="newColor()">New Color!</button>
 		<button onclick="nextColor()">Next Color</button>
-		<button onclick="deleteColor()">Delete Last Color</button>
+		<button onclick="deleteLastColor()">Delete Last Color</button>
 		<select id="ddBGColor" name="ddTextColor" class="btn dropdown-toggle" style="font-weight: bold;">
 			<option hidden="hidden">Select Background Color</option>
 		</select>
 		<button onclick="deleteSelectedColor()">Delete Selected Color</button>
 	</div>
 </div>
+
+
+<script>
+
+const dd = document.querySelector("#ddBGColor");
+const bodyNode = document.querySelector("body");
+const infoNode = document.querySelector("textarea#info");
+
+function generateRandomColor(a){
+	return	{
+				name: a ? a : '',
+				c1 : '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'),
+				c2 : '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')
+			};
+}
+
+function updateInfo(){
+	infoNode.textContent = `${dd.children[dd.selectedIndex].value}`;
+}
+
+function updateBackground(color){
+	if(color){
+		bodyNode.style.background = `linear-gradient(${color.c1},${color.c2}) no-repeat`;
+	}else{
+		const c = dd.children[dd.selectedIndex].value.split(" ");
+		bodyNode.style.background = `linear-gradient(${c[0]},${c[1]}) no-repeat`;
+	}
+	updateInfo();
+}
+
+function updateDropDownColor(color){
+	if(color){
+		dd.style.backgroundColor = color.c1;
+		dd.style.color = color.c2;
+	}else{
+		const c = dd.children[dd.selectedIndex].value.split(" ");
+		dd.style.backgroundColor = c[0];
+		dd.style.color = c[1];
+	}
+}
+
+function newColor(){
+	const color = generateRandomColor();
+	const newOption = document.createElement('option');
+	
+	newOption.text = color.c1 + ' - ' + color.c2;
+	newOption.value = color.c1 + ' ' + color.c2;
+	
+	newOption.style.backgroundColor = color.c1;
+	newOption.style.color = color.c2;
+	
+	dd.add(newOption);
+	
+	dd.selectedIndex = dd.length - 1;
+	updateDropDownColor();
+	
+	updateBackground(color);
+}
+
+function ddchangefunc(){
+	updateDropDownColor();
+	updateBackground();
+}
+dd.addEventListener("change", ddchangefunc);
+
+function deleteLastColor(){
+	if(dd.children.length > 1){
+		dd.selectedIndex = dd.children.length - 1;
+		deleteSelectedColor();
+	}
+}
+
+function deleteSelectedColor(){
+	if(dd.selectedIndex != 0){
+		var tempIndex = dd.selectedIndex;
+		dd.removeChild(dd.children[dd.selectedIndex]);
+		
+		if(tempIndex == dd.children.length){
+			dd.selectedIndex = --tempIndex;
+		}else{
+			dd.selectedIndex = tempIndex;
+		}
+		
+		updateDropDownColor();
+		updateBackground();
+		
+	}else{
+		return;
+	}
+}
+
+function prevColor(){
+	if(dd.children.length < 3){
+		return;
+	}
+	
+	dd.selectedIndex = dd.selectedIndex != 1 ? dd.selectedIndex - 1 : dd.children.length - 1;
+	
+	updateDropDownColor();
+	updateBackground();
+}
+
+function nextColor(){
+	//if there is only 1 color, then there is no need for cycling
+	if(dd.children.length < 3){
+		return;
+	}
+	
+	dd.selectedIndex = dd.selectedIndex + 1 != dd.children.length ? dd.selectedIndex + 1 : 1;
+	
+	updateDropDownColor();
+	updateBackground();
+}
+
+
+</script>
+
 
 </body>
 </html>
